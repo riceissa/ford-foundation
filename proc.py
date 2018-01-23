@@ -2,6 +2,7 @@
 # License: CC0 https://creativecommons.org/publicdomain/zero/1.0/
 
 import csv
+import datetime
 
 
 def mysql_quote(x):
@@ -40,7 +41,7 @@ def main():
             amount = row[' Amount'].replace("$", "").replace(",", "")
 
             # there's also "Fiscal Year" and "End Date"
-            donation_date = row[' Start Date']
+            donation_date = convert_date(row[' Start Date'])
 
             notes = row[' Description']
 
@@ -49,7 +50,7 @@ def main():
                 mysql_quote(donee),  # donee
                 amount,  # amount
                 mysql_quote(donation_date),  # donation_date
-                mysql_quote("FIXME"),  # donation_date_precision
+                mysql_quote("day"),  # donation_date_precision
                 mysql_quote("donation log"),  # donation_date_basis
                 mysql_quote("FIXME"),  # cause_area
                 mysql_quote("http://www.fordfoundation.org/work/our-grants/grants-database/grants-all"),  # url
@@ -61,6 +62,10 @@ def main():
             first = False
         print(";")
 
+
+def convert_date(x):
+    """Convert date string from D/M/YYYY to YYYY-MM-DD format."""
+    return datetime.datetime.strptime(x, "%m/%d/%Y").strftime("%Y-%m-%d")
 
 if __name__ == "__main__":
     main()
